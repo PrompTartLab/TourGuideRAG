@@ -37,9 +37,10 @@ class VerifySQLNode(BaseNode):
             return GraphState(sql_status="retry")
 
         filtered_data = filter_csv_with_sql(sql_query, self.context.conn)
-        print("Data Length: ", len(filtered_data))
+        print(type(filtered_data))
 
         if isinstance(filtered_data, pd.DataFrame) and not filtered_data.empty:
+            print("Data Length: ", len(filtered_data))
             columns_to_show = [
                 column
                 for column in filtered_data.columns

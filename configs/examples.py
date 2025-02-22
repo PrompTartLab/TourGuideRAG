@@ -46,27 +46,73 @@ EXAMPLES = [
     },
     {
         "question": "서울 강남구에서 운영시간이 24시간인 동물병원을 알려주세요.",
-        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%강남구%' AND OPERATION_TIME LIKE '%00:00~24:00%'",
+        "sql": """
+        SELECT *,
+            CASE strftime('%w', 'now')
+                WHEN '1' THEN CLOSE_HOUR_MON  -- Monday
+                WHEN '2' THEN CLOSE_HOUR_TUE  -- Tuesday
+                WHEN '3' THEN CLOSE_HOUR_WED  -- Wednesday
+                WHEN '4' THEN CLOSE_HOUR_THU  -- Thursday
+                WHEN '5' THEN CLOSE_HOUR_FRI  -- Friday
+                WHEN '6' THEN CLOSE_HOUR_SAT  -- Saturday
+                WHEN '0' THEN CLOSE_HOUR_SUN  -- Sunday
+            END AS CLOSE_HOUR
+        FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%강남구%' AND CATEGORY_NM = '동물병원' AND CLOSE_HOUR = '24:00'
+        """,
+        "source": "pet_places",
+    },
+    {
+        "question": "종로구에 10시 이후에도 영업하는 카페 알려주세요",
+        "sql": """
+        SELECT *,
+            CASE strftime('%w', 'now')
+                WHEN '1' THEN CLOSE_HOUR_MON  -- Monday
+                WHEN '2' THEN CLOSE_HOUR_TUE  -- Tuesday
+                WHEN '3' THEN CLOSE_HOUR_WED  -- Wednesday
+                WHEN '4' THEN CLOSE_HOUR_THU  -- Thursday
+                WHEN '5' THEN CLOSE_HOUR_FRI  -- Friday
+                WHEN '6' THEN CLOSE_HOUR_SAT  -- Saturday
+                WHEN '0' THEN CLOSE_HOUR_SUN  -- Sunday
+            END AS CLOSE_HOUR
+        FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%종로구%' AND CATEGORY_NM = '카페' AND CLOSE_HOUR > '22:00'
+        """,
+        "source": "pet_places",
+    },
+    {
+        "question": "인천에 9시 이전에도 영업하는 동물약국 알려주세요",
+        "sql": """
+        SELECT *,
+            CASE strftime('%w', 'now')
+                WHEN '1' THEN OPEN_HOUR_MON  -- Monday
+                WHEN '2' THEN OPEN_HOUR_TUE  -- Tuesday
+                WHEN '3' THEN OPEN_HOUR_WED  -- Wednesday
+                WHEN '4' THEN OPEN_HOUR_THU  -- Thursday
+                WHEN '5' THEN OPEN_HOUR_FRI  -- Friday
+                WHEN '6' THEN OPEN_HOUR_SAT  -- Saturday
+                WHEN '0' THEN OPEN_HOUR_SUN  -- Sunday
+            END AS OPEN_HOUR
+        FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%인천광역시%' AND CATEGORY_NM = '동물약국' AND OPEN_HOUR < '09:00'
+        """,
         "source": "pet_places",
     },
     {
         "question": "서울에서 주말에 운영하는 반려동물 카페를 추천해주세요.",
-        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%' AND CATEGORY_NM = '카페' AND (OPERATION_TIME LIKE '%토%' AND OPERATION_TIME LIKE '%일요일%')",
+        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%' AND CATEGORY_NM = '카페' AND (OPENING_WEEKDAYS LIKE '%토%' AND OPENING_WEEKDAYS LIKE '%일%')",
         "source": "pet_places",
     },
     {
-        "question": "세종시에서 토요일에 운영하는 반려동물 미용 시설이 있나요?",
-        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%세종특별자치시%' AND CATEGORY_NM = '미용' AND OPERATION_TIME LIKE '%토%'",
+        "question": "부산에서 토요일에 운영하는 반려동물 미용 시설이 있나요?",
+        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%부산광역시%' AND CATEGORY_NM = '미용' AND OPENING_WEEKDAYS LIKE '%토%'",
         "source": "pet_places",
     },
     {
-        "question": "경기도에서 일요일에도 영업하는 반려동물 병원을 찾고 싶어요.",
-        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%경기도%' AND CATEGORY_NM = '동물병원' AND OPERATION_TIME LIKE '%일요일%'",
+        "question": "경기도에서 일에도 영업하는 반려동물 병원을 찾고 싶어요.",
+        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%경기도%' AND CATEGORY_NM = '동물병원' AND OPENING_WEEKDAYS LIKE '%일%'",
         "source": "pet_places",
     },
     {
         "question": "서울 종로구에서 월요일에 운영하는 반려동물 약국이 있나요?",
-        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%종로구%' AND CATEGORY_NM = '동물약국' AND OPERATION_TIME LIKE '%월%'",
+        "sql": "SELECT * FROM PET_PLACES WHERE LAND_LOT_ADDRESS LIKE '%서울특별시%종로구%' AND CATEGORY_NM = '동물약국' AND OPENING_WEEKDAYS LIKE '%월%'",
         "source": "pet_places",
     },
     {
